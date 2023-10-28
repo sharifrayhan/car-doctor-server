@@ -36,6 +36,19 @@ async function run() {
     const bookingCollection = database.collection("bookings");
 
 
+    app.get('/services', async(req,res)=>{
+        const cursor = services.find()
+        const result = await cursor.toArray()
+        res.send(result)
+    })
+
+    app.get('/services/:id', async(req,res)=>{
+        const id = req.params.id;
+        const query = {_id: new ObjectId(id)}
+        console.log('i need data for id :', id);
+        const product =  await services.findOne( query );
+        res.send(product);
+    })
 
 
   } finally {
