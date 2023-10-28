@@ -4,13 +4,12 @@ const app = express()
 const port = process.env.PORT || 5000
 var cors = require('cors')
 require('dotenv').config()
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 app.use(cors())
 app.use(express.json())
 
 
-
-const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.ujemn7v.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -36,8 +35,15 @@ async function run() {
     const bookingCollection = database.collection("bookings");
 
 
+    app.post('/services', async(req,res)=>{
+        const product = req.body;
+        console.log('hello', product)
+        const result = await serviceCollection.insertOne(product);
+        res.send(result)
+      } )
+
     app.get('/services', async(req,res)=>{
-        const cursor = services.find()
+        const cursor = serviceCollection.find()
         const result = await cursor.toArray()
         res.send(result)
     })
@@ -46,7 +52,7 @@ async function run() {
         const id = req.params.id;
         const query = {_id: new ObjectId(id)}
         console.log('i need data for id :', id);
-        const product =  await services.findOne( query );
+        const product =  await serviceCollection.findOne( query );
         res.send(product);
     })
 
